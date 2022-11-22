@@ -15,6 +15,9 @@ from siguard.support.lock import LockFile
 log = logging.getLogger(__name__)
 
 
+log = logging.getLogger(__name__)
+
+
 class MythrilConfig:
     """
     The Mythril Analyzer class
@@ -39,20 +42,16 @@ class MythrilConfig:
         """
 
         try:
-            mythril_dir ="/Users/zhangjiashuo/Desktop/Current/Crypto_SmartContract/mythril"
+            mythril_dir = os.environ["MYTHRIL_DIR"]
         except KeyError:
             mythril_dir = os.path.join(os.path.expanduser("~"), ".mythril")
-        #mythril_dir = "/Users/zhangjiashuo/Desktop/Current/Crypto_SmartContract/mythril"
-        log.info(mythril_dir)
+
         if not os.path.exists(mythril_dir):
             # Initialize data directory
-            mythril_dir = "/Users/zhangjiashuo/Desktop/Current/Crypto_SmartContract/mythril/"
-            if not os.path.exists(mythril_dir):
-                log.info("Creating mythril data directory")
-                os.mkdir(mythril_dir)
+            log.info("Creating mythril data directory")
+            os.mkdir(mythril_dir)
 
         db_path = str(Path(mythril_dir) / "signatures.db")
-        
         if not os.path.exists(db_path):
             # if the default mythril dir doesn't contain a signature DB
             # initialize it with the default one from the project root
@@ -74,23 +73,23 @@ class MythrilConfig:
         config = ConfigParser(allow_no_value=True)
 
         config.optionxform = str
-        # with LockFile(self.config_path):
-        #     config.read(self.config_path, "utf-8")
+        with LockFile(self.config_path):
+            config.read(self.config_path, "utf-8")
 
-        #     if "defaults" not in config.sections():
-        #         self._add_default_options(config)
+            if "defaults" not in config.sections():
+                self._add_default_options(config)
 
-        #     if not config.has_option("defaults", "dynamic_loading"):
-        #         self._add_dynamic_loading_option(config)
+            if not config.has_option("defaults", "dynamic_loading"):
+                self._add_dynamic_loading_option(config)
 
-        #     if not config.has_option("defaults", "infura_id"):
-        #         config.set("defaults", "infura_id", "")
+            if not config.has_option("defaults", "infura_id"):
+                config.set("defaults", "infura_id", "")
 
-        #     with codecs.open(self.config_path, "w", "utf-8") as fp:
-        #         config.write(fp)
+            with codecs.open(self.config_path, "w", "utf-8") as fp:
+                config.write(fp)
 
-        #     if not self.infura_id:
-        #         self.infura_id = config.get("defaults", "infura_id", fallback="")
+            if not self.infura_id:
+                self.infura_id = config.get("defaults", "infura_id", fallback="")
 
     @staticmethod
     def _add_default_options(config: ConfigParser) -> None:

@@ -133,7 +133,6 @@ class SignatureDB(object, metaclass=Singleton):
             self.path = os.environ.get("MYTHRIL_DIR") or os.path.join(
                 os.path.expanduser("~"), ".mythril"
             )
-        self.path="/Users/zhangjiashuo/Desktop/Current/Crypto_SmartContract/mythril/"
         self.path = os.path.join(self.path, "signatures.db")
 
         log.info("Using signature database at %s", self.path)
